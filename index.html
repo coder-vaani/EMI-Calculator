@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMI Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+
+<body>
+    <header>
+        <div class="header">
+            <h1>EMI Calculator</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="main">
+            <div class="input">
+                <form action="#">
+                    <div>
+                        <label for="">Loan Amount</label><br>
+                        <input type="text" placeholder="₹ Amount" id="loan-amount">
+                    </div>
+                    <div>
+                        <label for="">Interest Rate</label><br>
+                        <input type="number" placeholder="% Rate" id="interest-rate">
+                    </div>
+                    <div>
+                        <label for="">Time Period</label><br>
+                        <input type="number" placeholder="No. of Years" id="time">
+                    </div>
+                    <div class="button">
+                        <button id="btn">Calculate</button>
+                    </div>
+                </form>
+
+                <div class="display-result" id="emi-details">
+                    <label for="">EMI</label>
+                    <span>₹ &nbsp;<div class="result" id="emi"></div></span>
+                </div>
+            </div>
+            <div class="output">
+                <div id="pay-details">
+                    <div class="display-result">
+                        <label for="">Total Amount &ensp;</label>
+                        <span>₹ &nbsp;<div class="result" id="total"></div></span>
+
+
+                    </div>
+                    <div class="display-result">
+                        <label for="">Payable Interest &ensp;</label>
+                        <span>₹ &nbsp;<div class="result" id="interest"></div></span>
+                    </div>
+                    <div id="emiChart"></div>
+                </div>
+
+
+            </div>
+        </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer">
+            <p>Created by <span>Ashish Ranjan</span> | &#169;2023</p>
+        </div>
+    </footer>
+
+    <!-- Javascript for calculating EMI -->
+    <script>
+        let loanAmount = document.getElementById('loan-amount');
+        let rateOfInterest = document.getElementById('interest-rate');
+        let years = document.getElementById('time');
+        let emi, total, interest;
+
+        let btn = document.getElementById('btn');
+        let res = document.getElementById('emi');
+        let tot = document.getElementById('total');
+        let int = document.getElementById('interest');
+
+        res.style.display = 'none';
+        tot.style.display = 'none';
+        int.style.display = 'none';
+
+        //Adding Event Listener to button
+        btn.addEventListener('click', () => {
+            a = loanAmount.value;
+            r = (rateOfInterest.value) / 12 / 100;
+            t = (years.value) * 12;
+            //calculation of EMI
+            emi = ((a * r * (1 + r) ** t) / (((1 + r) ** t) - 1));
+            emi = parseFloat(emi).toFixed(2); //parsing to 2 decimal places
+            total = emi * t;
+            total = parseFloat(total).toFixed(2); //parsing to 2 decimal places
+            interest = total - a;
+            interest = parseInt(interest).toFixed(2); //parsing to 2 decimal places
+            i = interest.toLocaleString();
+
+            if (isNaN(emi)) {
+                emi = total = interest = 0;
+            }
+
+            //Assign the results
+            res.innerText = emi;
+            tot.innerText = total;
+            int.innerText = i;
+
+            //Display the results
+            res.style.display = 'block';
+            tot.style.display = 'block';
+            int.style.display = 'block';
+
+            //function to create pie chart
+            function showChart() {
+                var x = (a * 100) / total;
+                var y = 100 - x;
+                if (isNaN(x)) {
+                    x = y = 50;
+                }
+
+                var chart = new CanvasJS.Chart("emiChart", {
+                    animationEnabled: true,
+                    title: {
+                        text: "Amount Break-Up"
+                    },
+                    data: [{
+                        type: "pie",
+                        startAngle: 360,
+                        yValueFormatString: "##0.00\"%\"",
+                        indexLabel: "{label} {y}",
+                        dataPoints: [
+                            { y: x, label: "Loan Amount" },
+                            { y: y, label: "Payable Interest" },
+                        ]
+                    }]
+                });
+                chart.render();
+            }
+            showChart();
+            // resetting the values to empty
+            emi = 0;
+        })
+
+    </script>
+
+</body>
+
+
+</html>
