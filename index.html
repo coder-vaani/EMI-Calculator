@@ -98,11 +98,14 @@
             total = parseFloat(total).toFixed(2); //parsing to 2 decimal places
             interest = total - a;
             interest = parseInt(interest).toFixed(2); //parsing to 2 decimal places
-            i = interest.toLocaleString();
-
-            if (isNaN(emi)) {
-                emi = total = interest = 0;
+           
+            //setting comma to output
+            function numberWithCommas(x) {
+                return x.toString().split('.')[0].length > 3 ? x.toString().substring(0, x.toString().split('.')[0].length - 3).replace(/\B(?=(\d{2})+(?!\d))/g, ",") + "," + x.toString().substring(x.toString().split('.')[0].length - 3) : x.toString();
             }
+            emi = numberWithCommas(emi);
+            total = numberWithCommas(total);
+            interest = numberWithCommas(interest);
 
             //Assign the results
             res.innerText = emi;
